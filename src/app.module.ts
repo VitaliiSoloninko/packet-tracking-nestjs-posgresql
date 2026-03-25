@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { databaseConfig } from './config/database.config';
 import { Packet } from './models/packet.model';
+import { PacketsModule } from './packets/packets.module';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { Packet } from './models/packet.model';
       ...databaseConfig,
       models: [Packet],
     }),
-    SequelizeModule.forFeature([Packet]),
+    PacketsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
