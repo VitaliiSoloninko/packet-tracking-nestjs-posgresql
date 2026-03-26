@@ -1,0 +1,39 @@
+services:
+  track_nest:
+    build: .
+    container_name: track_nest
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=5004
+      - DB_HOST=track_postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=ZruMs1gyEsNA7Akmsp1Q
+      - DB_NAME=packet_tracking
+    ports:
+      - '5004:5004'
+    depends_on:
+      track_postgres:
+        condition: service_healthy
+
+  track_postgres:
+    image: postgres:18-alpine
+    container_name: track_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: packet_tracking
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ZruMs1gyEsNA7Akmsp1Q
+    ports:
+      - '5437:5432'
+    volumes:
+      - track_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  track_postgres_data:
