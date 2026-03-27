@@ -5,6 +5,19 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // CORS Configuration
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN || '*', // In production, specify exact domains
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+    ],
+  });
+
   // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('Packet Tracking API')

@@ -1,102 +1,102 @@
 # Docker Usage Guide
 
-## Локальная разработка с Docker
+## Local Development with Docker
 
-### Запуск проекта
+### Running the Project
 
 ```bash
-# Сборка и запуск контейнеров
+# Build and start containers
 docker-compose up -d
 
-# Просмотр логов
+# View logs
 docker-compose logs -f
 
-# Просмотр логов только приложения
+# View application logs only
 docker-compose logs -f app
 
-# Остановить контейнеры
+# Stop containers
 docker-compose down
 
-# Остановить контейнеры и удалить volumes (очистить БД)
+# Stop containers and remove volumes (clear database)
 docker-compose down -v
 ```
 
-### Проверка работы
+### Verification
 
-После запуска проект будет доступен:
+After startup, the project will be available at:
 
 - API: http://localhost:3000
-- Swagger документация: http://localhost:3000/api
+- Swagger documentation: http://localhost:3000/api
 - PostgreSQL: localhost:5432
 
-### Импорт данных в Docker PostgreSQL
+### Importing Data into Docker PostgreSQL
 
 ```bash
-# Войти в контейнер PostgreSQL
+# Enter PostgreSQL container
 docker exec -it packet-tracking-db psql -U postgres -d packet_tracking
 
-# Импортировать CSV данные
+# Import CSV data
 docker exec -i packet-tracking-db psql -U postgres -d packet_tracking << EOF
 \COPY packets (trackingNumber, lat, lng, status, createdAt, updatedAt) FROM '/tmp/packets-data.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',');
 EOF
 ```
 
-Или использовать pgAdmin для подключения к localhost:5432.
+Or use pgAdmin to connect to localhost:5432.
 
-### Пересборка образа
+### Rebuilding the Image
 
 ```bash
-# Пересборка образа приложения
+# Rebuild application image
 docker-compose up -d --build
 
-# Пересборка только app сервиса
+# Rebuild only app service
 docker-compose up -d --build app
 ```
 
-### Отладка
+### Debugging
 
 ```bash
-# Войти в контейнер приложения
+# Enter application container
 docker exec -it packet-tracking-app sh
 
-# Проверить переменные окружения
+# Check environment variables
 docker exec packet-tracking-app env
 
-# Проверить статус контейнеров
+# Check container status
 docker-compose ps
 
-# Проверить здоровье PostgreSQL
+# Check PostgreSQL health
 docker exec packet-tracking-db pg_isready -U postgres
 ```
 
-## Деплой на сервер
+## Server Deployment
 
-### Подготовка сервера
+### Server Preparation
 
 ```bash
-# Установить Docker и Docker Compose на сервере
+# Install Docker and Docker Compose on the server
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 
-# Установить Docker Compose
+# Install Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
-### Деплой проекта
+### Project Deployment
 
 ```bash
-# 1. Скопировать проект на сервер
+# 1. Copy project to server
 scp -r . user@your-server:/path/to/app
 
-# Или использовать git
+# Or use git
 git clone <repository-url>
 cd packet-tracking-nestjs-posgresql
 
-# 2. Создать .env файл на сервере
+# 2. Create .env file on server
 nano .env
 
-# 3. Запустить контейнеры
+# 3. Start containers
 docker-compose up -d
 
 # 4. Проверить логи

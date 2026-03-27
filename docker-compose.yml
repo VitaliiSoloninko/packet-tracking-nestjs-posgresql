@@ -11,6 +11,7 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=ZruMs1gyEsNA7Akmsp1Q
       - DB_NAME=packet_tracking
+      - CORS_ORIGIN=*
     ports:
       - '5004:5004'
     depends_on:
